@@ -31,12 +31,7 @@ if __name__ == "__main__":
     model_name = "Qwen/Qwen2.5-Math-1.5B"
 
     # Create the LLM instance
-    llm = LLM(
-        model=model_name,
-        device="cpu",           # Force CPU usage
-        enforce_eager=True,     # Use eager execution (required for CPU)
-        disable_custom_all_reduce=True  # Disable GPU-specific optimizations
-        )
+    llm = LLM(model=model_name)
 
     eval_sampling_params = SamplingParams(
         include_stop_str_in_output=True,
