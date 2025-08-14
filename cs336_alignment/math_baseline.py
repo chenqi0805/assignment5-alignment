@@ -20,6 +20,7 @@ def evaluate_vllm(
         if prompt is None:
             raise ValueError("Output prompt is None")
         generated_text = output.outputs[0].text
+        print(f"Input: {prompt} ", f"Output: {generated_text}")
         results.append(reward_fn(prompt, generated_text))
 
     with open(output_file, "w", encoding="utf-8") as f:
