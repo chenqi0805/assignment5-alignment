@@ -31,7 +31,7 @@ if __name__ == "__main__":
     model_name = "Qwen/Qwen2.5-Math-1.5B"
 
     # Create the LLM instance
-    llm = LLM(model=model_name)
+    llm = LLM(model=model_name, device="cuda")
 
     eval_sampling_params = SamplingParams(
         include_stop_str_in_output=True,
