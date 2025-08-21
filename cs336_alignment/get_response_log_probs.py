@@ -1,9 +1,10 @@
 import torch
 
+from transformers import PreTrainedModel
 from cs336_alignment.compute_entropy import compute_entropy
 
 def get_response_log_probs(
-        model: torch.nn.Module,
+        model: PreTrainedModel,
         input_ids: torch.Tensor,
         labels: torch.Tensor,
         return_token_entropy: bool = False,
