@@ -190,6 +190,8 @@ def run_sft_experiment(
         if step >= n_sft:
             break
 
+    wandb.finish()
+
     model.save_pretrained(save_directory=output_dir)
     tokenizer.save_pretrained(save_directory=output_dir)
 
