@@ -2,7 +2,6 @@ import torch
 
 from cs336_alignment.masked_normalize import masked_normalize
 
-
 def sft_microbatch_train_step(
         policy_log_probs: torch.Tensor,
         response_mask: torch.Tensor,
