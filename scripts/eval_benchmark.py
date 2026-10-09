@@ -26,6 +26,7 @@ import csv
 import json
 import logging
 import time
+from enum import Enum
 from pathlib import Path
 from typing import Optional
 
@@ -59,7 +60,14 @@ MMLU_LETTERS = ("A", "B", "C", "D")
 
 app = typer.Typer(add_completion=False)
 
-BENCHMARK = typer.Option(..., help="Which benchmark to evaluate.")
+
+class Benchmark(str, Enum):
+    """The four evaluated benchmarks (typer renders the choices in --help)."""
+
+    mmlu = "mmlu"
+    gsm8k = "gsm8k"
+    alpaca_eval = "alpaca_eval"
+    simple_safety_tests = "simple_safety_tests"
 
 
 def _format_instruction(instruction: str, use_alpaca_template: bool) -> str:
@@ -150,7 +158,7 @@ def _sst_examples(data_dir: Path, limit: Optional[int]) -> list[dict]:
 
 @app.command()
 def main(
-    benchmark: str = BENCHMARK,
+    benchmark: Benchmark = typer.Option(..., help="Which benchmark to evaluate."),
     model_path: str = typer.Option(LLAMA_3_1_8B_PATH, help="Model checkpoint (base model or SFT checkpoint)."),
     data_dir: Path = typer.Option(REPO_ROOT / "data", help="Repo data directory (MMLU/GSM8K ship with the repo)."),
     output_dir: Path = typer.Option(..., help="Directory for predictions and metrics."),
@@ -180,7 +188,7 @@ def main(
         "gsm8k": lambda: _gsm8k_examples(data_dir, split, limit),
         "alpaca_eval": lambda: _alpaca_examples(data_dir, limit),
         "simple_safety_tests": lambda: _sst_examples(data_dir, limit),
-    }[benchmark]()
+    }[benchmark.value]()
     if not examples:
         raise ValueError(f"No examples found for benchmark={benchmark} split={split} in {data_dir}")
 
