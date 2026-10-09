@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.12"
+
+      # flash-attn builds from source and needs CUDA; it is optional at
+      # runtime, so skip installing it (README's install protocol).
+      - name: Install dependencies (skip flash-attn build)
+        run: uv sync --no-install-package flash-attn
+
+      # The test fixtures load the Qwen model from the course's cluster path.
+      - name: Prepare model directory
+        run: |
+          sudo mkdir -p /data/a5-alignment/models
+          sudo chown -R "$(id -un)" /data/a5-alignment
+
+      - name: Cache Qwen2.5-Math-1.5B
+        uses: actions/cache@v4
+        with:
+          path: /data/a5-alignment/models/Qwen2.5-Math-1.5B
+          key: qwen2.5-math-1.5b
+
+      - name: Download Qwen2.5-Math-1.5B (public checkpoint)
+        run: |
+          uv run --no-sync python -c "from huggingface_hub import snapshot_download; snapshot_download('Qwen/Qwen2.5-Math-1.5B', local_dir='/data/a5-alignment/models/Qwen2.5-Math-1.5B')"
+
+      - name: Run tests
+        run: uv run --no-sync pytest -q
