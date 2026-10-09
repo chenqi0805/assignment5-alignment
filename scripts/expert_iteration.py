@@ -23,6 +23,7 @@ import random
 from pathlib import Path
 from typing import Optional
 
+import torch
 import typer
 
 from cs336_alignment.common import masked_mean
@@ -104,7 +105,6 @@ def main(
     wandb_project: str = typer.Option("a5-expert-iteration", help="wandb project name."),
 ) -> None:
     """Run Algorithm 2 (expert iteration) on MATH."""
-    import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
     from vllm import SamplingParams  # lazy: vLLM only loads when the script runs
 
